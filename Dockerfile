@@ -2,22 +2,35 @@ FROM python:3.10-slim
 
 # Create a non-root user for security (HF Requirement)
 RUN useradd -m -u 1000 user
-USER user
-ENV PATH="/home/user/.local/bin:$PATH"
-
 WORKDIR /app
 
-# Install dependencies as the non-root user
-COPY --chown=user requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt-dir/lists/*
 
-# Copy the rest of the application
+# Copy configuration files
+COPY --chown=user pyproject.toml .
+COPY --chown=user uv.lock .
+COPY --chown=user requirements.txt .
+
+# Install dependencies and project
+# Note: Using pip currently, but could use uv if needed.
+# Installing -e . ensures the 'server' script works.
+RUN pip install --no-cache-dir --user --upgrade pip && \
+    pip install --no-cache-dir --user -r requirements.txt && \
+    pip install --no-cache-dir --user -e .
+
+# Copy source code
 COPY --chown=user . .
 
+# Environment setup
+ENV PATH="/home/user/.local/bin:$PATH"
 ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
 
-# HF Space port
 EXPOSE 7860
+USER user
 
-# Run the FastAPI app using uvicorn
-CMD ["python", "app.py"]
+# Using the 'server' command defined in pyproject.toml
+CMD ["server"]

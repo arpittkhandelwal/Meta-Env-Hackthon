@@ -85,6 +85,10 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 # 3. Mount Gradio to FastAPI
 app = gr.mount_gradio_app(app, demo, path="/")
 
-if __name__ == "__main__":
+def main():
     port = int(os.getenv("PORT", 7860))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    # We use "server.app:app" because the entry point will be called from the package root
+    uvicorn.run("server.app:app", host="0.0.0.0", port=port, reload=False)
+
+if __name__ == "__main__":
+    main()

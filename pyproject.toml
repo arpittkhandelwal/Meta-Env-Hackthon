@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "adaptive_workops_env"
+version = "1.0.0"
+description = "Advanced multi-step office workflow simulation for RL agents."
+readme = "README.md"
+authors = [
+    { name = "Arpit Khandelwal" }
+]
+requires-python = ">=3.9"
+dependencies = [
+    "pydantic>=2.0.0",
+    "openai>=1.0.0",
+    "pyyaml",
+    "pytest",
+    "fastapi",
+    "uvicorn",
+    "gradio",
+    "openenv-core",
+]
+
+[project.scripts]
+serve = "server.app:main"
+server = "server.app:main"
+
+[tool.setuptools]
+packages = ["env", "models", "graders", "server"]

@@ -1,0 +1,20 @@
+metadata:
+  name: "Adaptive AI WorkOps Environment (AAWE)"
+  version: "1.0.0"
+  description: "Advanced multi-step office workflow simulation for RL agents."
+  author: "Antigravity AI"
+
+tasks:
+  - id: "email_triage"
+    difficulty: "easy"
+    max_steps: 3
+  - id: "customer_support"
+    difficulty: "medium"
+    max_steps: 3
+  - id: "code_review"
+    difficulty: "hard"
+    max_steps: 3
+
+reward_range: [-1.0, 1.0]
+observation_space: "text"
+action_space: "text"

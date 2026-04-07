@@ -17,11 +17,14 @@ COPY --chown=user requirements.txt .
 # Copy source code
 COPY --chown=user . .
 
+# Switch to non-root user for installation
+USER user
+
 # Install dependencies and project
 # Installing -e . ensures the 'server' script works.
-RUN pip install --no-cache-dir --user --upgrade pip && \
-    pip install --no-cache-dir --user -r requirements.txt && \
-    pip install --no-cache-dir --user -e .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -e .
 
 # Environment setup
 ENV PATH="/home/user/.local/bin:$PATH"

@@ -4,3 +4,4 @@ pyyaml
 pytest
 fastapi
 uvicorn
+gradio

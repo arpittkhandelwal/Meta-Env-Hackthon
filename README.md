@@ -9,96 +9,95 @@ license: mit
 app_port: 7860
 ---
 
-# 🚀 Adaptive AI WorkOps Environment (AAWE)
+<div align="center">
+  <h1>🚀 Adaptive AI WorkOps Environment (AAWE)</h1>
+  <h3>Simulation of Real-World AI Workplace Dynamics for the Meta OpenEnv RL Challenge</h3>
 
-**AAWE** is an advanced multi-step office workflow simulation designed for the Meta OpenEnv Hackathon. It focuses on realistic task dynamics, including email triage, customer support, and code review, where agents must demonstrate reasoning, action, and recovery.
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+  [![OpenEnv Compliant](https://img.shields.io/badge/OpenEnv-Compliant-success.svg)](https://github.com/meta-llama/openenv)
+  [![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Space-blue)](https://huggingface.co/spaces/arpitkhandelwal810/Meta-Env-Hackthon)
+
+  **Overview** | **Tasks** | **Architecture** | **Quick Start** | **Evaluation**
+</div>
+
+---
 
 ## 📖 Overview
-Modern AI agents often struggle with multi-step tasks that require maintaining state and adapting to feedback. AAWE provides a robust benchmark for evaluating these capabilities in a simulated office environment.
+**AAWE** is a production-grade, multi-step Reasoning-Action (ReAct) simulation environment. It presents agents with tasks encountered in real office workflows—**Email Triage**, **Customer Support**, and **Code Review**—where failure to reason leads to stagnated results.
 
-### Motivation
-- **Realism**: Tasks are modeled after actual work scenarios.
-- **Adaptive Difficulty**: The environment increases difficulty (e.g., "Hard Mode") if the agent performs well.
-- **Granular Grading**: Programmatic graders provide detailed feedback on each step.
+### ✨ Key Features
+- 🧠 **Deep Reasoning Integration**: Observations require multi-step planning and state management.
+- 📈 **Adaptive Difficulty**: Dynamically switches to "Hard Mode" based on agent performance.
+- 📊 **Programmatic Grading**: Deterministic scoring (0.0 to 1.0) with granular feedback.
+- 🐳 **Dockerized Deployment**: Fully compatible with Hugging Face Spaces (2 vCPU / 8 GB).
 
-## 🕹️ Environment Specification
-
-### Observation Space
-- **Type**: `Text-based (Typed Observation Model)`
-- **Content**: Includes the current input text, task history, current step, and metadata.
-- **Example**: `[NORMAL MODE] Classify this email...`
-
-### Action Space
-- **Type**: `Text-based (Typed Action Model)`
-- **Schema**: Agents must provide a `Reasoning` string and a `Response` string.
-- **Format**: 
-  ```text
-  - Reasoning: <thought process>
-  - Response: <actual action/answer>
-  ```
-
-### Reward Function
-- **Incremental Progress**: Rewards are assigned per step based on grading criteria.
-- **Penalty for Stagnation**: A small penalty is applied if the agent's score does not improve between steps.
-- **Self-Correction Bonus**: Agents receive a bonus for improving their score after a previous low-performing step.
+---
 
 ## 📋 Tasks
 
-| Task ID | Name | Difficulty | Description |
-| :--- | :--- | :--- | :--- |
-| `email_triage` | Email Triage | Easy | Classify emails and suggest immediate actions. |
-| `customer_support` | Customer Support | Medium | Handle customer complaints with empathy and policy compliance. |
-| `code_review` | Code Review | Hard | Identify bugs and security vulnerabilities in code snippets. |
+| Task ID | Level | Objective | Expected Baseline |
+| :--- | :--- | :--- | :---: |
+| `email_triage` | 🟢 **Easy** | Classify urgency & suggest immediate actions. | 0.92 |
+| `customer_support` | 🟡 **Medium** | Empathy-driven conflict resolution & policy sync. | 0.78 |
+| `code_review` | 🔴 **Hard** | Security vulnerability detection & bug hunting. | 0.65 |
 
-## 🚀 Baseline Performance
-Evaluated using `gpt-4o-mini` with the provided `inference.py` script:
+---
 
-- **Email Triage**: 0.92
-- **Customer Support**: 0.78
-- **Code Review**: 0.65
-- **Aggregate Score**: 0.78
+## 🏗️ Architecture
 
-## 🛠️ Setup and Usage
-
-### Prerequisites
-- Docker installed
-- Hugging Face Token (`HF_TOKEN`)
-
-### Local Development
-1. Clone the repository:
-   ```bash
-   git clone <repo_url>
-   cd adaptive_workops_env
-   ```
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   pip install -e .
-   ```
-3. Run the server:
-   ```bash
-   server
-   ```
-
-### Running with Docker
-```bash
-docker build -t aawe .
-docker run -p 7860:7860 aawe
+```mermaid
+graph TD
+    A[Agent / LLM] -->|Action: Reasoning + Response| B[AAWE Server]
+    B -->|Step Data| C{Task Engine}
+    C -->|Email Triage| D[Easy Grader]
+    C -->|Customer Support| E[Medium Grader]
+    C -->|Code Review| F[Hard Grader]
+    D/E/F -->|Reward + Observation| B
+    B -->|Typed JSON| A
 ```
 
-### Evaluation (Inference)
-The `inference.py` script evaluates a model against all environment tasks.
+---
+
+## 🛠️ Quick Start
+
+### 1. Local Setup
 ```bash
-export HF_TOKEN="your_token"
-export API_BASE_URL="https://api.openai.com/v1"
-export MODEL_NAME="gpt-4o-mini"
+# Clone
+git clone https://github.com/arpittkhandelwal/Meta-Env-Hackthon.git
+cd Meta-Env-Hackthon
+
+# Install
+pip install -r requirements.txt
+pip install -e .
+
+# Launch Server
+server
+```
+
+### 2. Running Evaluation (Inference)
+Maintain high-quality logs for judging with the built-in inference script:
+```bash
+export HF_TOKEN="your_hf_token"
 python inference.py
 ```
 
-## 🔐 Environment Variables
-- `HF_TOKEN` (Mandatory): Your Hugging Face API key.
-- `API_BASE_URL` (Default: `https://api.openai.com/v1`): LLM API endpoint.
-- `MODEL_NAME` (Default: `gpt-4o-mini`): Model identifier.
+---
+
+## 🔐 Configuration
+
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `HF_TOKEN` | Hugging Face Access Token | (Required) |
+| `API_BASE_URL` | LLM Gateway Endpoint | `https://api.openai.com/v1` |
+| `MODEL_NAME` | Model ID for testing | `gpt-4o-mini` |
 
 ---
-*Built with ❤️ by Antigravity AI for the Meta OpenEnv Hackathon.*
+
+## 🧪 OpenEnv Compliance
+> [!IMPORTANT]
+> This environment is built specifically for the **Meta OpenEnv RL Challenge**. It implements the mandatory `reset`, `step`, and `state` interfaces and passes all `openenv validate` checks.
+
+<div align="center">
+  <sub>Built with ❤️ for the AI Community.</sub>
+</div>

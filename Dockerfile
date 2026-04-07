@@ -14,15 +14,14 @@ COPY --chown=user pyproject.toml .
 COPY --chown=user uv.lock .
 COPY --chown=user requirements.txt .
 
+# Copy source code
+COPY --chown=user . .
+
 # Install dependencies and project
-# Note: Using pip currently, but could use uv if needed.
 # Installing -e . ensures the 'server' script works.
 RUN pip install --no-cache-dir --user --upgrade pip && \
     pip install --no-cache-dir --user -r requirements.txt && \
     pip install --no-cache-dir --user -e .
-
-# Copy source code
-COPY --chown=user . .
 
 # Environment setup
 ENV PATH="/home/user/.local/bin:$PATH"

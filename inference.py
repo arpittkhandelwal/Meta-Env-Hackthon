@@ -5,18 +5,27 @@ from env.environment import AdaptiveWorkOpsEnv
 from models.action import Action
 
 # 1. Environment Variable Configuration (Hackathon Requirements)
-API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
-MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
-HF_TOKEN = os.getenv("HF_TOKEN")
+API_KEY = os.getenv("OPENAI_API_KEY", os.getenv("HF_TOKEN"))
 
-if HF_TOKEN is None:
-    raise ValueError("HF_TOKEN environment variable is required")
+# If only HF_TOKEN is provided, we should default to HuggingFace's Inference API, not OpenAI's.
+DEFAULT_URL = "https://api.openai.com/v1"
+if not os.getenv("OPENAI_API_KEY") and os.getenv("HF_TOKEN"):
+    DEFAULT_URL = "https://api-inference.huggingface.co/v1/"
+
+API_BASE_URL = os.getenv("API_BASE_URL", DEFAULT_URL)
+
+# Default to a free HuggingFace model if routed there, otherwise use gpt-4o-mini
+DEFAULT_MODEL = "meta-llama/Llama-3.2-3B-Instruct" if "huggingface" in API_BASE_URL else "gpt-4o-mini"
+MODEL_NAME = os.getenv("MODEL_NAME", DEFAULT_MODEL)
+
+if API_KEY is None:
+    raise ValueError("OPENAI_API_KEY or HF_TOKEN environment variable is required")
 
 def run_inference():
     # Initialize OpenAI client
     client = OpenAI(
         base_url=API_BASE_URL,
-        api_key=HF_TOKEN
+        api_key=API_KEY
     )
 
     env = AdaptiveWorkOpsEnv()

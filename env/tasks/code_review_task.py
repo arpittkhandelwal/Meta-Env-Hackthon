@@ -31,14 +31,23 @@ class CodeReviewTask(BaseTask):
         )
 
     def step(self, action: Action) -> Tuple[Observation, float, bool]:
+        step_idx = self.current_step
         self.history.append(action.response)
         self.current_step += 1
+        
+        # Calculate strictly non-zero reward
+        reward = self.grade_step(step_idx, action)
+        
+        # Adaptive feedback based on quality (using logic similar to environment)
+        if reward * self.max_steps > 0.7:
+             self.difficulty = "harder"
+             
         done = self.current_step >= self.max_steps
         
         if self.current_step == 1:
-            next_input = "Explain why this bug occurs and how to fix it."
+            next_input = "Identify the specific line numbers causing potential issues."
         elif self.current_step == 2:
-            next_input = "Provide the corrected code block."
+            next_input = "Rewrite the identified lines with proper error handling."
         else:
             next_input = "Task completed."
 
@@ -48,7 +57,7 @@ class CodeReviewTask(BaseTask):
             input_text=next_input,
             history=self.history
         )
-        return obs, 0.0, done
+        return obs, reward, done
 
     def get_grader(self):
         from graders.code_grader import CodeGrader

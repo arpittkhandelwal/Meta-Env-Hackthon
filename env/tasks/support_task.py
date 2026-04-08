@@ -31,17 +31,24 @@ class SupportTask(BaseTask):
         )
 
     def step(self, action: Action) -> Tuple[Observation, float, bool]:
+        step_idx = self.current_step
         self.history.append(action.response)
         self.current_step += 1
         
-        # Adaptive feedback
+        # Calculate strictly non-zero reward
+        reward = self.grade_step(step_idx, action)
+        
+        # Adaptive difficulty logic
+        if reward * self.max_steps > 0.7:
+            self.difficulty = "harder"
+            
         if self.difficulty == "harder":
             next_input = f"[{self.difficulty.upper()} MODE] Customer: 'That is not enough! I am posting this on social media unless you solve it NOW!'"
         elif "sorry" in action.response.lower() or "apologize" in action.response.lower():
             next_input = "Customer: 'Thank you for the apology, but when exactly will I get it?'"
         else:
             next_input = "Customer: 'You didn't even apologize! I want to speak to a manager!'"
-
+ 
         done = self.current_step >= self.max_steps
         obs = Observation(
             task_id=self.task_id,
@@ -49,7 +56,7 @@ class SupportTask(BaseTask):
             input_text=next_input if not done else "Task completed.",
             history=self.history
         )
-        return obs, 0.0, done
+        return obs, reward, done
 
     def get_grader(self):
         from graders.support_grader import SupportGrader

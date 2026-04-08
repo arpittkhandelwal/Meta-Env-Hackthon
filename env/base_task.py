@@ -22,3 +22,15 @@ class BaseTask(ABC):
     @abstractmethod
     def get_grader(self):
         pass
+
+    def grade_step(self, step_idx: int, action: Action) -> float:
+        grader = self.get_grader()
+        raw_score = grader.grade(step_idx, action)
+        
+        # Consistent reward shaping: return a proportional slice of the quality
+        # Max steps is usually 3, so reward is ~0.03 to 0.30.
+        reward = raw_score / float(self.max_steps)
+        
+        # Force strict bounds (not 0.0 and not 1.0)
+        reward = max(0.01, min(0.33, reward))
+        return reward

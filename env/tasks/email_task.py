@@ -32,8 +32,13 @@ class EmailTask(BaseTask):
         )
 
     def step(self, action: Action) -> Tuple[Observation, float, bool]:
+        step_idx = self.current_step
         self.history.append(action.response)
         self.current_step += 1
+        
+        # Calculate strictly non-zero reward
+        reward = self.grade_step(step_idx, action)
+        
         done = self.current_step >= self.max_steps
         
         if self.current_step == 1:
@@ -49,7 +54,7 @@ class EmailTask(BaseTask):
             input_text=next_input,
             history=self.history
         )
-        return obs, 0.0, done # Score calculated by env
+        return obs, reward, done
 
     def get_grader(self):
         from graders.email_grader import EmailGrader

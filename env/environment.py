@@ -67,6 +67,9 @@ class AdaptiveWorkOpsEnv:
             penalty = 0.5
             reward_value -= penalty
         
+        # Clamp reward to be strictly within (0, 1) as required by the evaluator
+        reward_value = max(0.001, min(0.999, reward_value))
+
         self.total_cumulative_score += reward_value
         self.previous_score = current_step_total
 

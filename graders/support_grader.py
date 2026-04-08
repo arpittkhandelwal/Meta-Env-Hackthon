@@ -3,7 +3,7 @@ from models.action import Action
 
 class SupportGrader:
     def grade(self, step: int, action: Action) -> Dict[str, float]:
-        score_breakdown = {"empathy": 0.0, "solution": 0.0, "professionalism": 0.0}
+        score_breakdown = {"empathy": 0.01, "solution": 0.01, "professionalism": 0.01}
         resp = action.response.lower()
 
         if step == 0:
@@ -17,6 +17,6 @@ class SupportGrader:
                 score_breakdown["solution"] = 0.6
             score_breakdown["empathy"] = 0.4 if "understand" in resp else 0.1
         elif step == 2:
-            score_breakdown["professionalism"] = 1.0 if len(resp) > 40 else 0.5
+            score_breakdown["professionalism"] = 0.95 if len(resp) > 40 else 0.5
 
         return score_breakdown

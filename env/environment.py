@@ -68,7 +68,8 @@ class AdaptiveWorkOpsEnv:
             reward_value -= penalty
         
         # Clamp reward to be strictly within (0, 1) as required by the evaluator
-        reward_value = max(0.001, min(0.999, reward_value))
+        # Using 0.01/0.99 so :.2f formatting prints "0.01"/"0.99", never "0.00"/"1.00"
+        reward_value = max(0.01, min(0.99, reward_value))
 
         self.total_cumulative_score += reward_value
         self.previous_score = current_step_total

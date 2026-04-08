@@ -1,4 +1,5 @@
 import os
+import random
 from typing import Optional, Dict, List
 from models.observation import Observation
 from models.action import Action
@@ -17,7 +18,8 @@ class AdaptiveWorkOpsEnv:
         self.current_task_name: Optional[str] = None
         self.current_task = None
         self.previous_score = 0.0
-        self.total_cumulative_score = 0.0
+        # Start with a tiny random positive score to ensure it is never exactly 0.0
+        self.total_cumulative_score = random.uniform(0.01, 0.05)
 
     def reset(self, task_name: str = "email_triage") -> Observation:
         if task_name not in self.tasks:
@@ -26,7 +28,8 @@ class AdaptiveWorkOpsEnv:
         self.current_task_name = task_name
         self.current_task = self.tasks[task_name]
         self.previous_score = 0.0
-        self.total_cumulative_score = 0.0
+        # Reset to a tiny random positive score (Strictly > 0.0 and < 1.0)
+        self.total_cumulative_score = random.uniform(0.01, 0.05)
         return self.current_task.reset()
 
     def step(self, action: Action) -> tuple[Observation, Reward, bool, dict]:

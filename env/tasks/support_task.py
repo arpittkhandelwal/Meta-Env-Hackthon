@@ -7,7 +7,7 @@ import random
 
 class SupportTask(BaseTask):
     def __init__(self):
-        super().__init__("customer_support_01", max_steps=3)
+        super().__init__("customer_support", max_steps=3)
         self.scenarios = [
             "I've been waiting for my refund for 2 weeks! This is unacceptable.",
             "My product arrived broken and the box was completely crushed. I want a replacement.",

@@ -7,7 +7,7 @@ import random
 
 class CodeReviewTask(BaseTask):
     def __init__(self):
-        super().__init__("code_review_01", max_steps=3)
+        super().__init__("code_review", max_steps=3)
         self.scenarios = [
             "def calculate_avg(nums):\n    return sum(nums) / len(nums)  # Potential ZeroDivisionError",
             "def append_to(element, to=[]):\n    to.append(element)\n    return to  # Mutable default argument bug",

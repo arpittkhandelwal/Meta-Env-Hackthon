@@ -7,7 +7,7 @@ import random
 
 class EmailTask(BaseTask):
     def __init__(self):
-        super().__init__("email_triage_01", max_steps=3)
+        super().__init__("email_triage", max_steps=3)
         self.scenarios = [
             {"type": "Internal", "text": "Subject: URGENT: Server down??!!\nHi, I think the server is down, my dashboard is not loading. Pls fix it ASAP. Thx, Alice."},
             {"type": "Phishing", "text": "Subject: Action Required: Verify your account\nDear User, we detected a suspicious login. Click here: bit.ly/fake-link to verify now or your account will be deleted."},

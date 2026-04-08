@@ -52,7 +52,7 @@ class AdaptiveWorkOpsEnv:
         reward = Reward(
             score=reward_value,
             total_score=self.total_cumulative_score,
-            breakdown={"score_idx": step_idx}, # Keep simple
+            breakdown={"score": reward_value}, 
             penalty=penalty
         )
 

@@ -27,7 +27,12 @@ async def health():
 async def reset_env(req: Optional[ResetRequest] = None):
     task_id = req.task_id if req else "email_triage"
     obs = env.reset(task_id)
-    return {"observation": obs.model_dump(), "status": "reset_success"}
+    # Returning the observation directly as top-level JSON for standard compliance
+    return obs.model_dump()
+
+@app.get("/state")
+async def get_state():
+    return env.state()
 
 @app.post("/step")
 async def step_env(req: StepRequest):

@@ -44,36 +44,19 @@ class AdaptiveWorkOpsEnv:
         breakdown = grader.grade(step_idx, action)
         
         # Reward shaping: reward = current_score - previous_score
+        # The sum of these rewards over the episode will exactly equal the final current_step_total.
+        # Since we bounded the grader breakdown to max 0.99, the sum will always be strictly in (0, 1).
         current_step_total = sum(breakdown.values())
         reward_value = current_step_total - self.previous_score
         
         # Hard Mode Trigger (Adaptive Difficulty)
         if current_step_total > 0.7:
             self.current_task.difficulty = "harder"
-            
-        # Score Plateau Penalty: punish stagnation
-        if self.current_task.current_step > 1 and abs(current_step_total - self.previous_score) < 0.01:
-            reward_value -= 0.1
-            
-        # Self-Correction Bonus: reward agents that recover/improve
-        correction_bonus = 0.0
-        if self.current_task.current_step > 1 and current_step_total > self.previous_score:
-            correction_bonus = 0.1
-            reward_value += correction_bonus
-            
-        # Apply penalties if action is empty or repetitive
-        penalty = 0.0
-        if not action.response.strip():
-            penalty = 0.5
-            reward_value -= penalty
         
-        # Clamp reward to be strictly within (0, 1) as required by the evaluator
-        # Using 0.01/0.99 so :.2f formatting prints "0.01"/"0.99", never "0.00"/"1.00"
-        reward_value = max(0.01, min(0.99, reward_value))
-
         self.total_cumulative_score += reward_value
         self.previous_score = current_step_total
 
+        penalty = 0.0
         reward = Reward(
             score=reward_value,
             total_score=self.total_cumulative_score,

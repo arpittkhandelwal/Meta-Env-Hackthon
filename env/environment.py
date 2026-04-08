@@ -41,26 +41,25 @@ class AdaptiveWorkOpsEnv:
         
         # Grading
         grader = self.current_task.get_grader()
-        breakdown = grader.grade(step_idx, action)
+        breakdown_score = grader.grade(step_idx, action)
         
         # Reward shaping: return a proportional slice of the current quality
         # This guarantees every step reward is strictly in (0, 1) AND the total sum across steps is strictly in (0, 1)
-        # We avoid negative rewards, exactly 0.0 (since min is 0.03/3 = 0.01), and exactly 1.0.
-        current_step_total = sum(breakdown.values())
-        reward_value = current_step_total / float(self.current_task.max_steps)
+        # We avoid negative rewards, exactly 0.0 (since min is 0.01/3 = 0.0033), and exactly 1.0.
+        reward_value = breakdown_score / float(self.current_task.max_steps)
         
         # Hard Mode Trigger (Adaptive Difficulty)
-        if current_step_total > 0.7:
+        if breakdown_score > 0.7:
             self.current_task.difficulty = "harder"
         
         self.total_cumulative_score += reward_value
-        self.previous_score = current_step_total
+        self.previous_score = breakdown_score
 
         penalty = 0.0
         reward = Reward(
             score=reward_value,
             total_score=self.total_cumulative_score,
-            breakdown=breakdown,
+            breakdown={"score": breakdown_score},
             penalty=penalty
         )
 

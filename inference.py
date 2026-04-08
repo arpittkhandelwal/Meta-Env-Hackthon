@@ -71,7 +71,7 @@ def run_inference():
                 # [STEP] step=<n> action=<action_str> reward=<0.00> done=<true|false> error=<msg|null>
                 # action_str is cleaned to ensure no newlines break the output format
                 action_clean = agent_text.replace("\n", " ").replace("'", "").replace('"', "")[:100]
-                print(f"[STEP] step={step_count} action='{action_clean}' reward={reward:.4f} done={str(done).lower()} error={error_msg}", flush=True)
+                print(f"[STEP] step={step_count} action='{action_clean}' reward={reward:.2f} done={str(done).lower()} error={error_msg}", flush=True)
 
         except Exception as e:
             error_msg = str(e).replace("\n", " ")
@@ -79,7 +79,7 @@ def run_inference():
             # 3. Final End of Task (Mandatory)
             total_score = sum(rewards_list)
             success = "true" if done and total_score > 0.5 else "false"
-            rewards_str = ",".join([f"{r:.4f}" for r in rewards_list])
+            rewards_str = ",".join([f"{r:.2f}" for r in rewards_list])
             
             # [END] success=<true|false> steps=<n> rewards=<r1,r2,...,rn>
             print(f"[END] success={success} steps={step_count} rewards={rewards_str}", flush=True)

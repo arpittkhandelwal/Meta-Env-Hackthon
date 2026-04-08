@@ -2,21 +2,23 @@ from typing import Dict
 from models.action import Action
 
 class SupportGrader:
-    def grade(self, step: int, action: Action) -> Dict[str, float]:
-        score_breakdown = {"empathy": 0.01, "solution": 0.01, "professionalism": 0.01}
+    def grade(self, step: int, action: Action) -> float:
         resp = action.response.lower()
+        score = 0.10
 
         if step == 0:
             if "sorry" in resp or "apologize" in resp:
-                score_breakdown["empathy"] = 0.49
-            if "refund" in resp or "process" in resp:
-                score_breakdown["solution"] = 0.29
-            score_breakdown["professionalism"] = 0.19 if len(resp) > 30 else 0.05
+                score = 0.95
+            elif "refund" in resp or "process" in resp:
+                score = 0.60
+            elif len(resp) > 30:
+                score = 0.30
         elif step == 1:
             if "timeline" in resp or "soon" in resp or "days" in resp:
-                score_breakdown["solution"] = 0.59
-            score_breakdown["empathy"] = 0.39 if "understand" in resp else 0.1
+                score = 0.95
+            elif "understand" in resp:
+                score = 0.60
         elif step == 2:
-            score_breakdown["professionalism"] = 0.97 if len(resp) > 40 else 0.5
+            score = 0.95 if len(resp) > 40 else 0.50
 
-        return score_breakdown
+        return score

@@ -56,7 +56,14 @@ class AdaptiveWorkOpsEnv:
             penalty=penalty
         )
 
-        return obs, reward, done, {}
+        # Added for judge compatibility
+        info = {
+            "score": self.total_cumulative_score,
+            "step_reward": reward_value,
+            "is_success": done and self.total_cumulative_score > 0.3
+        }
+
+        return obs, reward, done, info
 
     def state(self) -> dict:
         return {

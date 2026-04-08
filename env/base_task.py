@@ -32,5 +32,6 @@ class BaseTask(ABC):
         reward = raw_score / float(self.max_steps)
         
         # Force strict bounds (not 0.0 and not 1.0)
-        reward = max(0.01, min(0.33, reward))
+        # Shifted to [0.10, 0.30] safe zone
+        reward = max(0.10, min(0.30, reward))
         return reward

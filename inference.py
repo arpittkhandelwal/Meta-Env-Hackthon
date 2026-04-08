@@ -84,11 +84,14 @@ def run_inference():
             # 3. Final End of Task (Mandatory)
             total_score = sum(rewards_list)
             # Ensure success is string "true"/"false" and threshold is safe
-            success_bool = done and total_score > 0.1
+            # Use 0.2 as the bar for "passable" since our min total is ~0.3
+            success_bool = done and total_score > 0.2
             success_str = "true" if success_bool else "false"
-            rewards_str = ",".join([f"{r:.2f}" for r in rewards_list])
             
-            # [END] success=<true|false> steps=<n> rewards=<r1,r2,...,rn>
+            # Format with space after comma for standard regex parsing: "0.10, 0.20, 0.30"
+            rewards_str = ", ".join([f"{r:.2f}" for r in rewards_list])
+            
+            # [END] success=<true|false> steps=<n> rewards=<r1, r2, ..., rn>
             print(f"[END] success={success_str} steps={step_count} rewards={rewards_str}", flush=True)
 
 if __name__ == "__main__":

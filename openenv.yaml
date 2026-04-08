@@ -15,6 +15,6 @@ tasks:
     difficulty: "hard"
     max_steps: 3
 
-reward_range: [-1.0, 1.0]
+reward_range: [0.01, 0.99]
 observation_space: "text"
 action_space: "text"

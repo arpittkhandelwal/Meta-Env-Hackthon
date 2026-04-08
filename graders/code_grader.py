@@ -8,17 +8,17 @@ class CodeGrader:
 
         if step == 0:
             if "zero" in resp or "empty" in resp or "division" in resp:
-                score = 0.95
+                score = 0.90
             elif len(resp) > 15:
-                score = 0.60
+                score = 0.50
         elif step == 1:
             if "zero" in resp and "list" in resp:
-                score = 0.95
+                score = 0.90
             elif "error" in resp:
-                score = 0.60
+                score = 0.50
         elif step == 2:
             if "if not" in resp or "len(" in resp or "if numbers" in resp:
-                score = 0.95
+                score = 0.90
             else:
                 score = 0.20
 

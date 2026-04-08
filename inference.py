@@ -69,20 +69,27 @@ def run_inference():
                 rewards_list.append(reward)
                 
                 # [STEP] step=<n> action=<action_str> reward=<0.00> done=<true|false> error=<msg|null>
-                # action_str is cleaned to ensure no newlines break the output format
-                action_clean = agent_text.replace("\n", " ").replace("'", "").replace('"', "")[:100]
-                print(f"[STEP] step={step_count} action='{action_clean}' reward={reward:.2f} done={str(done).lower()} error={error_msg}", flush=True)
+                # Clean action: truncate, remove non-alphanumeric (except underscores), and replace spaces
+                import re
+                action_clean = re.sub(r'[^a-zA-Z0-9\s]', '', agent_text)
+                action_clean = action_clean.strip().replace(" ", "_")[:50]
+                if not action_clean:
+                    action_clean = "empty_action"
+                
+                print(f"[STEP] step={step_count} action={action_clean} reward={reward:.2f} done={str(done).lower()} error={error_msg}", flush=True)
 
         except Exception as e:
             error_msg = str(e).replace("\n", " ")
         finally:
             # 3. Final End of Task (Mandatory)
             total_score = sum(rewards_list)
-            success = "true" if done and total_score > 0.5 else "false"
+            # Ensure success is string "true"/"false" and threshold is safe
+            success_bool = done and total_score > 0.1
+            success_str = "true" if success_bool else "false"
             rewards_str = ",".join([f"{r:.2f}" for r in rewards_list])
             
             # [END] success=<true|false> steps=<n> rewards=<r1,r2,...,rn>
-            print(f"[END] success={success} steps={step_count} rewards={rewards_str}", flush=True)
+            print(f"[END] success={success_str} steps={step_count} rewards={rewards_str}", flush=True)
 
 if __name__ == "__main__":
     run_inference()

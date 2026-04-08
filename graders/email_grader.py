@@ -8,20 +8,20 @@ class EmailGrader:
 
         if step == 0:  # Classification
             if "urgent" in resp:
-                score = 0.95
+                score = 0.90
             elif "triage" in resp or "fix" in resp:
-                score = 0.60
+                score = 0.50
             elif len(resp) > 20:
                 score = 0.30
         elif step == 1:  # Justification
             if "server" in resp or "down" in resp:
-                score = 0.95
+                score = 0.90
             elif len(resp) > 50:
-                score = 0.60
+                score = 0.50
         elif step == 2:  # Reply
             if "hi" in resp or "hello" in resp:
-                score = 0.95
+                score = 0.90
             elif "alice" in resp:
-                score = 0.60
+                score = 0.50
 
         return score

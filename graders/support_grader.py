@@ -8,15 +8,15 @@ class SupportGrader:
 
         if step == 0:
             if "sorry" in resp or "apologize" in resp:
-                score_breakdown["empathy"] = 0.5
+                score_breakdown["empathy"] = 0.49
             if "refund" in resp or "process" in resp:
-                score_breakdown["solution"] = 0.3
-            score_breakdown["professionalism"] = 0.2 if len(resp) > 30 else 0.0
+                score_breakdown["solution"] = 0.29
+            score_breakdown["professionalism"] = 0.19 if len(resp) > 30 else 0.05
         elif step == 1:
             if "timeline" in resp or "soon" in resp or "days" in resp:
-                score_breakdown["solution"] = 0.6
-            score_breakdown["empathy"] = 0.4 if "understand" in resp else 0.1
+                score_breakdown["solution"] = 0.59
+            score_breakdown["empathy"] = 0.39 if "understand" in resp else 0.1
         elif step == 2:
-            score_breakdown["professionalism"] = 0.95 if len(resp) > 40 else 0.5
+            score_breakdown["professionalism"] = 0.97 if len(resp) > 40 else 0.5
 
         return score_breakdown
